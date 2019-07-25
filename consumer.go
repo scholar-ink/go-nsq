@@ -1107,7 +1107,7 @@ func (r *Consumer) handlerLoop(handler Handler) {
 		if err != nil {
 			r.log(LogLevelError, "Handler returned error (%s) for msg %s", err, message.ID)
 			if !message.IsAutoResponseDisabled() {
-				message.Requeue(-1)
+				message.RequeueWithoutBackoff(time.Duration(math.Pow(r.config.DefaultRequeueDelay.Seconds(), float64(message.Attempts))) * time.Second)
 			}
 			continue
 		}
